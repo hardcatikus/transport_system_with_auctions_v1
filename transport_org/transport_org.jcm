@@ -1,0 +1,73 @@
+
+mas transport_org {
+
+    
+	//auctioneer
+	agent auctioneer{
+		join: auction_room, bus_park
+		focus: auction_room.request_gatherer, bus_park.bus_park_creator,
+		 auction_room.free_bus_gatherer, auction_room.auction_manager, bus_park.ride_selecter
+	}
+	
+
+	//buses
+    agent bus1 : bus.asl {
+    	join: bus_park, auction_room
+    	focus: auction_room.auction_manager, bus_park.bus_park_creator,
+    	 bus_park.path_builder, bus_park.ride_selecter
+    	beliefs: point("A"),
+    			 speed(60),
+    			 capacity(4),
+    			 weight_a(60),
+    			 weight_b(20),
+    			 weight_g(20)
+    }
+    
+    agent bus2 : bus.asl {
+    	join: bus_park,auction_room
+    	focus:auction_room.auction_manager, bus_park.bus_park_creator,
+    	 bus_park.path_builder, bus_park.ride_selecter
+    	beliefs: point("B"),
+    			 speed(55),
+    			 capacity(2),
+    			 weight_a(60),
+    			 weight_b(30),
+    			 weight_g(10)
+    }
+    
+    //passengers
+    agent passenger1 : passenger.asl {
+    	beliefs: price(320), 
+    			 start_point("B"),
+				 end_point("E"),
+    			 start_time("10:00")    			 
+    }
+    
+    agent passenger2 : passenger.asl {
+    	beliefs: price(150), 
+    			 start_point("A"),
+				 end_point("B"),
+    			 start_time("10:05")
+    }
+    
+    agent passenger3 : passenger.asl {
+    	beliefs: price(200), 
+    			 start_point("A"),
+				 end_point("E"),
+    			 start_time("10:03")
+    }
+    
+    workspace auction_room { 
+    	artifact request_gatherer: tools_of_auctioneer.RequestGatherer(3)
+    	artifact free_bus_gatherer: tools_of_auctioneer.FreeBusGatherer
+    	artifact auction_manager: tools_of_auctioneer.AuctionManager
+	}
+	
+	workspace bus_park { 
+    	artifact bus_park_creator: tools_of_bus.BusParkCreator
+    	artifact path_builder: tools_of_bus.PathBuilder
+		artifact ride_selecter: tools_of_bus.RideSelecter
+	}
+
+}
+
